@@ -47,7 +47,7 @@ The VPP establishes a strict architectural boundary dividing the operational dom
     \node[draw, rectangle, rounded corners, fill=white, minimum width=3.5cm, minimum height=1cm] (handset) at (2,1.8) {\textbf{Frontend Handset}};
     \node[font=\footnotesize, align=center] at (2,0.8) {Volatile RAM Only\\No NVMe User Data\\Stateless OS Image};
     \node[draw, rectangle, fill=orange!20, minimum width=3.5cm] (sensors) at (2,-0.5) {Display / Touch / Sensors};
-    \node[font=\scriptsize, red!80!black] at (2,-1.8) {Subject to Physical Seizure,\\Faraday Bags, \& Coercion};
+    \node[font=\scriptsize, red!80!black, align=center] at (2,-1.8) {Subject to Physical Seizure,\\Faraday Bags, \& Coercion};
     \node[draw, rectangle, fill=red!20, font=\scriptsize] at (2,-2.8) {Target of Cellebrite / GrayKey};
 
     % Network Domain
@@ -63,7 +63,7 @@ The VPP establishes a strict architectural boundary dividing the operational dom
     \node[font=\footnotesize, align=center] at (12,0.8) {Primary eSIM/pSIM Baseband\\Encrypted Data Vault\\Application Runtime};
     \node[draw, rectangle, fill=green!20, minimum width=3.5cm] (hsm) at (12,-0.5) {Hardware Root of Trust (HSM)};
     \node[draw, rectangle, fill=cyan!20, minimum width=3.5cm] (oob) at (12,-1.6) {Out-of-Band Revocation Gateway};
-    \node[font=\scriptsize, green!80!black] at (12,-2.8) {Continuous Power \& Wired Fiber\\Zero Physical Exposure};
+    \node[font=\scriptsize, green!80!black, align=center] at (12,-2.8) {Continuous Power \& Wired Fiber\\Zero Physical Exposure};
 
     % Connections
     \draw[<->, ultra thick, blue] (handset) -- (5.5,1.8) -- (5.5,0.5) -- (8.5,0.5) -- (8.5,1.8) -- (backend);
