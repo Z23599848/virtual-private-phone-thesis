@@ -12,21 +12,21 @@
 
 ---
 
-## 📖 Vision & Core Premise
+## 📖 Vision & The Story
 
-> *"One phone stays home. The other goes in your pocket."*  
-> *"I want to be able to lose possession of the handset without losing control of the phone."*
+> *Are you a criminal whose phone keeps getting cast as Exhibit A? A hacker whose camera roll could fill six episodes of a Netflix documentary? I have an idea for the phone part. Your lawyer can handle the screenplay.* 🙂
 
-Every modern smartphone conflates two incompatible security concepts into a single physical unit:
-1. **The Human-Computer Interface (HCI):** A portable glass-and-aluminum device carried into hostile terrain, subject to police confiscation, border seizure, opportunistic theft, and surveillance.
-2. **The Root of Trust:** A vault containing private keys, banking apps, encrypted chat databases, primary cellular subscriber credentials (pSIM/eSIM), and 2FA recovery channels.
+Imagine you're caught. The cuffs click, and suddenly your phone is in police hands. Frankly, regardless of guilt or innocence, **it is fundamentally unfair to personal privacy that the police can just dig and dive into your entire life simply because they took a piece of hardware from your pocket.**
 
-When an ordinary phone is seized in an **After First Unlock (AFU)** state—or placed in a Faraday bag to defeat over-the-air (OTA) remote wipes—forensic tools such as **Cellebrite UFED** and **Magnet GrayKey** extract complete plaintext databases.
+The problem started with an ordinary frustration: lose your phone, borrow someone else's to log in, and where does the 2FA code go? Straight to the phone you just lost. We ask one pocket-sized device to hold our private lives, prove who we are, and then betray us the moment it leaves our hands.
 
-The **Virtual Private Phone (VPP)** eliminates this failure mode by decoupling the mobile architecture:
-- **The Backend ("Home Core"):** Kept in a secure domestic redoubt on continuous power and residential fiber. Hosts the physical SIM card, full-disk encrypted NVMe storage, application runtime, and root-of-trust HSM.
-- **The Frontend ("Pocket Handset"):** A stateless, ephemeral client running an immutable, RAM-only hardened OS with hardware peripheral pass-through (camera, mic, touchscreen, display, IMU) over an authenticated WireGuard/QUIC tunnel.
-- **Out-of-Band (OOB) Revocation Protocol:** If the frontend is confiscated or seized, an authenticated telephone call to a 24/7 hotline severs the session on the backend. The frontend retains zero decrypted user data, zero application databases, and no valid cryptographic keys.
+The solution is the **Virtual Private Phone (VPP)**:
+> *"One phone stays home. The other goes in your pocket."*
+
+- **The Backend ("Home Phone"):** Stays plugged in safely at home. It holds your primary SIM card, runs your apps, and stores your encrypted messages, photos, and files.
+- **The Frontend ("Pocket Handset"):** An expendable, stateless piece of hardware in your pocket. It has a generic data connection, giving you a screen, camera, microphone, and touchscreen—streaming live from home with zero local user storage.
+
+If the police seize your pocket phone—**whether you give them the password or not**—they get literally nothing. If they put it in a Faraday bag or you dial an emergency revocation hotline, the session cuts instantly and RAM wipes in under 50 milliseconds. The police are left holding a dead piece of glass, while your entire digital life remains intact at home.
 
 ---
 
