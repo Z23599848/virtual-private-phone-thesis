@@ -134,10 +134,12 @@ This proposal specifies two concrete experimental protocols that must be reprodu
 ## 👤 Researcher & Citation
 
 **Ali Ganji**  
-LabXIII Research  
+*Offensive Security Researcher & Technical Builder* | LabXIII  
 Website: [https://xiii.me](https://xiii.me)  
 Email: `aliganji@labxiii.org`  
 GitHub: [@Z23599848](https://github.com/Z23599848)
+
+> *Cybersecurity student and builder focusing primarily on offensive security, red team tooling, and practical tradecraft. My work spans digital forensics, RF/SDR ecosystems, virtualization, and intelligent automation—building high-leverage environments and systems designed around deep technical autonomy.*
 
 ```bibtex
 @article{ganji2026vpp,
