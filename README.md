@@ -126,7 +126,7 @@ pdflatex main.tex
 **Ali Ganji**  
 LabXIII Research  
 Website: [https://xiii.me](https://xiii.me)  
-Email: `contact@xiii.me`  
+Email: `aliganji@labxiii.org`  
 GitHub: [@Z23599848](https://github.com/Z23599848)
 
 ```bibtex
