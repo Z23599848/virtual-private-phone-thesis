@@ -1,5 +1,6 @@
 # The Virtual Private Phone (VPP)
 ### Decoupled Physical Architecture for Anti-Forensic Mobile Security & Resilient Digital Identity
+#### An Architectural & Research Proposal
 
 [![Build and Release Thesis PDF](https://github.com/Z23599848/virtual-private-phone-thesis/actions/workflows/latex.yml/badge.svg)](https://github.com/Z23599848/virtual-private-phone-thesis/actions/workflows/latex.yml)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -7,7 +8,7 @@
 > **Researcher:** [Ali Ganji](https://xiii.me)  
 > **Affiliation:** LabXIII Research (`aliganji@labxiii.org`)  
 > **Repository:** [https://github.com/Z23599848/virtual-private-phone-thesis](https://github.com/Z23599848/virtual-private-phone-thesis)  
-> **Thesis / Academic Paper:** A Thesis in Mobile Forensics & Cryptographic Security
+> **Document Type:** Research & Architectural Proposal (Awaiting Reproducible Prototype Benchmarking)
 
 ---
 
@@ -113,11 +114,20 @@ pdflatex main.tex
 
 ---
 
-## 🔬 Key Experimental Findings
+## 🔬 Proposed Verification Framework & Validation Criteria
 
-1. **Anti-Forensic Integrity:** When Handset $F_A$ was seized in an active, unlocked AFU state, out-of-band revocation severed the session within **18 ms**. The frontend hardware framebuffer zeroized within **42 ms**. Full physical chip acquisition revealed zero chat databases, zero SMS records, zero cached photos, and no route back to the home core.
-2. **Cold Replacement Speed:** Activating a cold spare frontend (Handset $F_B$) and restoring the entire operating environment took **21.1 seconds** total, without needing to reinstall applications or reconfigure 2FA tokens.
-3. **Motion-to-Photon Latency:** On commercial 5G networks, end-to-end touch latency measured **40.1 ms** with 60 fps AV1 video streaming, achieving full perceptual parity with local smartphones.
+This proposal specifies two concrete experimental protocols that must be reproducibly satisfied prior to any production deployment:
+
+1. **Protocol I: The Two-Handset Table Benchmark:** When Handset $F_A$ is placed on a table unlocked in an AFU state and an out-of-band revocation call is initiated, the prototype must achieve:
+   - Backend cryptographic peer severance within $\le 50$\,ms.
+   - Frontend hardware framebuffer and memory zeroization within $\le 50$\,ms.
+   - Zero recoverable chat databases, private keys, or media files under full physical chip extraction (Cellebrite UFED / GrayKey profiles).
+   - Operational session recovery on a cold-spare replacement (Handset $F_B$) within $\le 25$\,seconds.
+2. **Protocol II: The Outdoor Mobility & Sensor Benchmark:** The prototype must undergo field validation walking off domestic Wi-Fi onto cellular 5G:
+   - Seamless cellular handover with re-routing latency $\le 15$\,ms.
+   - Transparent incoming phone calls terminating at the home pSIM and ringing the pocket device with round-trip audio latency $\le 35$\,ms.
+   - Zero-remanence camera capture: photographing physical documents saves the original to the domestic core while leaving zero metadata or flash remnants on the pocket handset.
+3. **Motion-to-Photon Latency Budget:** Maintaining $\le 42.5$\,ms end-to-end touch latency under commercial 5G networks at 60 fps AV1 video streaming to guarantee perceptual parity with local smartphones.
 
 ---
 

@@ -26,12 +26,12 @@ Consider a cybersecurity researcher or investigative journalist traveling to hig
 
 Under our proposed architecture, the researcher decides \textit{in advance} where their operating environment lives. The entire execution environment, primary SIM, and persistent records remain hosted securely at home. If the portable handset is dropped, stolen, or searched at a transit checkpoint, the operator simply revokes the device pairing, procures an off-the-shelf replacement handset, authenticates, and resumes the session within minutes without needing to rebuild their operating environment from scratch.
 
-\subsection{Research Contributions}
-In this paper, we design, implement, and formally evaluate the \textbf{Virtual Private Phone (VPP)}. Our core contributions include:
+\subsection{Research Contributions and Proposal Scope}
+In this research proposal, we present the architectural specification, formal threat model, and experimental verification roadmap for the \textbf{Virtual Private Phone (VPP)}. Our core contributions include:
 \begin{itemize}
     \item \textbf{Bifurcated Thin-Client Architecture:} We propose a physical and logical decoupling of the smartphone into an untrusted, stateless \textit{Frontend Handset} and a secure, stationary \textit{Backend Core}.
-    \item \textbf{Virtual Hardware Abstraction Layer (V-HAL):} We develop a bidirectional peripheral virtualization pipeline that forwards multi-touch, microphone, camera, and sensor data with sub-40ms end-to-end latency, allowing the remote backend to behave as a seamless, local device.
-    \item \textbf{Deterministic Ephemeral Anti-Forensics:} We engineer an ephemeral, RAM-only frontend operating system that maintains zero persistent storage of application databases, media files, or long-term credentials, preventing physical extraction by commercial forensic suites.
-    \item \textbf{Out-of-Band Revocation Engine:} We specify a zero-knowledge, cryptographically enforced revocation protocol that terminates active sessions and scrubs client memory registers within milliseconds of an out-of-band signal.
-    \item \textbf{Empirical Evaluation:} We benchmark the VPP against standard Android/iOS deployments under simulated forensic acquisition workflows (Cellebrite UFED and GrayKey profiles) and validate cellular handover resiliency across LTE and 5G networks.
+    \item \textbf{Virtual Hardware Abstraction Layer (V-HAL) Specification:} We design a bidirectional peripheral virtualization pipeline that forwards multi-touch, microphone, camera, and sensor data with an engineering latency budget under 40\,ms, allowing the remote backend to behave as a seamless, local device.
+    \item \textbf{Deterministic Ephemeral Anti-Forensics:} We specify an ephemeral, RAM-only frontend operating system design that maintains zero persistent storage of application databases, media files, or long-term credentials, preventing physical extraction by commercial forensic suites.
+    \item \textbf{Out-of-Band Revocation Protocol:} We formalize a zero-knowledge, cryptographically enforced revocation protocol that terminates active sessions and commands client memory zeroization within milliseconds of an out-of-band trigger.
+    \item \textbf{Verification Methodology and Testbed Framework:} We define the concrete experimental testbed and empirical verification protocols (including the Two-Handset Table Protocol and the Outdoor Mobility Protocol) required to validate the system prior to practical deployment.
 \end{itemize}

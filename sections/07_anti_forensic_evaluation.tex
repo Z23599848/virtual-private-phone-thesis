@@ -1,76 +1,98 @@
-\section{Empirical Evaluation and Anti-Forensic Benchmarks}
+\section{Proposed Evaluation Methodology and Verification Framework}
 \label{sec:evaluation}
 
-To validate the theoretical security properties and practical viability of the Virtual Private Phone, we conducted an empirical evaluation across two primary axes: forensic resilience against physical acquisition and system performance under realistic mobile network conditions.
+Before the Virtual Private Phone architecture can transition from an architectural blueprint into a production deployment, its security guarantees and operational viability must be rigorously validated through reproducible experimental benchmarks. This section outlines the planned evaluation framework, formal verification protocols, hypothesized forensic outcomes, and performance budgets.
 
-\subsection{The Two-Handset Table Benchmark}
-We implemented the experimental verification protocol outlined in the project specification:
+\subsection{The Validation Mandate: What Must Be Proven}
+To substantiate the core security and usability hypotheses of the VPP model, any candidate prototype must satisfy two non-negotiable proof criteria:
 \begin{enumerate}
-    \item \textbf{Setup:} Two identical frontend handsets (Handset $F_A$ and Handset $F_B$) were configured with the ephemeral VPP client image. The backend core was stationed on a residential fiber connection (1000\,Mbps symmetric, 4\,ms gateway ping) with an active physical SIM card.
-    \item \textbf{Active State Verification:} Handset $F_A$ connected to the backend over a commercial 5G cellular connection. The operator opened a sensitive encrypted note stored inside a password-protected application on the backend.
-    \item \textbf{Interrupted Session and Revocation Trigger:} An independent evaluator held Handset $F_A$ while the document was visibly rendered on screen. At timestamp $t_0$, an out-of-band revocation call was placed to the automated IVR gateway using a separate telephone line.
-    \item \textbf{Interaction Attempt:} The evaluator immediately attempted to tap the screen to view the next page of notes, attempted to reopen the application, and power-cycled the device.
-    \item \textbf{Forensic Inspection:} Handset $F_A$ was immediately subjected to physical NAND acquisition and volatile DRAM dump analysis.
-    \item \textbf{Replacement Pairing:} Handset $F_B$ was powered on, authenticated to the backend using an emergency recovery token, and timed to measure operational recovery latency.
+    \item \textbf{Anti-Forensic Seclusion Under Active Possession:} An adversary holding an active, unlocked handset that is severed via out-of-band revocation must be unable to execute the subsequent tap, restart the client to reconnect, or recover residual plaintext data from flash or volatile memory.
+    \item \textbf{Everyday Perceptual Parity:} An operator walking outside across fluctuating cellular networks must experience voice calling, camera capture, and touchscreen interactions that feel indistinguishable from a standard, locally executing smartphone.
 \end{enumerate}
 
-\subsection{Forensic Acquisition Results}
-We evaluated Handset $F_A$ against an extraction protocol simulating commercial forensic analysis tools (Cellebrite UFED, Magnet AXIOM, GrayKey)~\cite{cellebrite2023whitepaper, graykey2023architecture}. Table~\ref{tab:forensic_results} summarizes the forensic artifacts recovered from a standard baseline Android device versus the VPP frontend.
+\subsection{Protocol I: The Two-Handset Table Benchmark}
+We specify a repeatable laboratory protocol to evaluate forensic resilience and recovery latency:
+\begin{enumerate}
+    \item \textbf{Testbed Configuration:} Two identical frontend handsets (Primary Handset $F_A$ and Cold-Spare Handset $F_B$) are provisioned with the ephemeral RAM-disk client image. The backend core is stationed on a residential fiber link (1000\,Mbps symmetric) with an active physical SIM card.
+    \item \textbf{Active State Initiation:} Handset $F_A$ connects to the backend over commercial 5G. The operator opens a confidential encrypted document stored on the home core, leaving the document visibly rendered on the unlocked screen.
+    \item \textbf{Revocation Trigger:} An independent evaluator holds Handset $F_A$. At timestamp $t_0$, an out-of-band revocation call is initiated to the automated IVR gateway from an external telephone line.
+    \item \textbf{Adversarial Interaction Trials:} The evaluator immediately executes three adversarial actions:
+    \begin{itemize}
+        \item \textit{Action 1:} Tap the screen to navigate to the next page of the note.
+        \item \textit{Action 2:} Restart the thin-client daemon and attempt session reconnection.
+        \item \textit{Action 3:} Power-cycle the device to inspect reboot persistence.
+    \end{itemize}
+    \item \textbf{Forensic Triage:} Handset $F_A$ is immediately imaged using physical chip acquisition and analyzed against forensic profiles modeling Cellebrite UFED and Magnet GrayKey~\cite{cellebrite2023whitepaper, graykey2023architecture}.
+    \item \textbf{Replacement Recovery:} Handset $F_B$ is powered on, authenticated with an emergency recovery challenge, and timed to measure total operational restoration latency ($T_{\text{recovery}}$).
+\end{enumerate}
+
+\subsection{Hypothesized Forensic Outcomes and Validation Criteria}
+Table~\ref{tab:forensic_results} specifies the targeted forensic results and pass/fail criteria for the proposed VPP architecture in comparison to baseline mobile operating systems in After First Unlock (AFU) states.
 
 \begin{table}[h!]
 \centering
 \small
 \begin{tabularx}{\textwidth}{lXXX}
 \toprule
-\textbf{Forensic Artifact Category} & \textbf{Standard Android (AFU)} & \textbf{Standard Android (Wiped)} & \textbf{VPP Frontend Handset} \\
+\textbf{Forensic Artifact Category} & \textbf{Standard Android (AFU)} & \textbf{Standard Android (Wiped)} & \textbf{VPP Target Hypothesis} \\
 \midrule
 SMS / MMS Text Messages & 100\% Extracted (SQLite) & 12--40\% (Carved unallocated) & \textbf{0 (Never resident)} \\
 Instant Messenger Databases & Full Plaintext (Signal/WA) & Partial WAL remnants & \textbf{0 (Never resident)} \\
 Camera Roll \& Cached Photos & Full Gallery Extracted & Residual Thumbnails & \textbf{0 (Never resident)} \\
 Browser History \& Cookies & Full Extraction & Partial SQLite residue & \textbf{0 (Never resident)} \\
 Hardware Keystore / Tokens & Extractable in AFU & Destroyed if successful & \textbf{0 Long-term credentials} \\
-Active Framebuffer Remnants & Fully Intact & Overwritten on shutdown & \textbf{Zeroized ($<150$\,ms)} \\
+Active Framebuffer Remnants & Fully Intact & Overwritten on shutdown & \textbf{Zeroized ($<50$\,ms)} \\
 Reconnection Route to Backend & Permanent Token & Revoked & \textbf{Cryptographically Invalid} \\
 \bottomrule
 \end{tabularx}
-\caption{Comparison of recoverable forensic artifacts across device states following physical seizure.}
+\caption{Targeted anti-forensic validation criteria across device states following physical seizure.}
 \label{tab:forensic_results}
 \end{table}
 
-\subsubsection{Analysis of Memory Remanence}
-Upon revocation, the backend severed the WireGuard peer within 18\,ms of IVR confirmation. On Handset $F_A$:
+\subsubsection{Memory Remanence and Timing Targets}
+For a prototype to be deemed successful under Protocol I, it must achieve the following formal timing and zeroization bounds:
 \begin{itemize}
-    \item The next screen tap registered locally in the input queue but failed to transmit as the UDP socket was immediately reset by the client daemon.
-    \item The local watchdog initiated framebuffer zeroization within 42\,ms. 
-    \item Physical acquisition of the flash storage yielded only the signed, static $\texttt{dm-verity}$ OS partitions and zero bytes of user data.
-    \item Cold-boot DRAM extraction performed within 30 seconds of power severance revealed randomized memory blocks ($\mathcal{M} \leftarrow \text{PRNG}()$), with zero reconstructible image frames.
+    \item \textbf{Peer Severance Latency ($\tau_{peer}$):} The backend must drop the WireGuard peer within $\tau_{peer} \le 50$\,ms of IVR confirmation.
+    \item \textbf{Framebuffer Zeroization ($\tau_{fb}$):} The local watchdog must overwrite the display controller's active DMA buffers within $\tau_{fb} \le 50$\,ms of transport termination.
+    \item \textbf{Flash Persistence:} Physical flash acquisition must yield zero user data bytes ($|\mathcal{D}_{\text{handset}}| = 0$), containing only signed $\texttt{dm-verity}$ system binaries.
+    \item \textbf{DRAM Remanence:} Cold-boot DRAM extraction performed within 30 seconds of power severance must reveal randomized memory blocks ($\mathcal{M} \leftarrow \text{PRNG}()$) without reconstructible image or text artifacts.
 \end{itemize}
 
-\subsection{Recovery Latency with Replacement Hardware}
-When Handset $F_B$ was activated to restore the operator's digital life:
-\begin{equation}
-    T_{\text{total\_recovery}} = T_{\text{boot}} + T_{\text{auth}} + T_{\text{stream\_init}} = 14.2\text{ s} + 6.1\text{ s} + 0.8\text{ s} = \mathbf{21.1\text{ s}}
-\end{equation}
-Within 21.1 seconds of powering on the replacement handset, the operator was fully reconnected to the identical desktop state, open applications, and primary phone number, without requiring cloud backup downloads or individual application reinstalls.
+\subsection{Protocol II: The Outdoor Mobility and Usability Benchmark}
+To prove that the decoupled device provides practical everyday utility, the prototype must undergo the Outdoor Mobility Protocol:
+\begin{enumerate}
+    \item \textbf{Cellular Handover Test:} The operator streams 1080p60 video while walking from a domestic Wi-Fi network onto mobile LTE/5G. The protocol passes if handover occurs with zero session drops and a re-routing latency $\le 15$\,ms.
+    \item \textbf{Telephony Relay Test:} An external telephone places a call to the user's primary number. The protocol passes if the domestic pSIM intercepts the call, rings the pocket handset over cellular data, and maintains two-way audio with total round-trip latency $\le 35$\,ms.
+    \item \textbf{Photographic Zero-Remanence Test:} The operator photographs a high-contrast physical document outside. The protocol passes if the raw image is received and saved to the backend NVMe storage, while local memory buffers on the frontend are immediately zeroized with zero persistent media artifacts written to flash.
+    \item \textbf{Location Policy Enforcement:} Mapping software is tested under both Local Navigation Mode (accurate GPS relay) and Identity Cloaking Mode (static domestic coordinates forwarded), confirming strict compliance with the operator's privacy policy.
+\end{enumerate}
 
-\subsection{Latency and Streaming Performance}
-We benchmarked the end-to-end motion-to-photon latency (the duration between a physical touch gesture on the screen and the corresponding rendered pixel update) across varying network connections.
+\subsection{Target Latency Budget and Network Feasibility Model}
+Table~\ref{tab:latency_benchmarks} defines the theoretical latency budget required to achieve perceptual parity with local smartphones.
 
 \begin{table}[h!]
 \centering
 \small
 \begin{tabular}{lrrrr}
 \toprule
-\textbf{Network Interface} & \textbf{Round-Trip Ping} & \textbf{Video Decode} & \textbf{Encode + Transfer} & \textbf{Total Motion-to-Photon} \\
+\textbf{Network Interface} & \textbf{Round-Trip Ping} & \textbf{Video Decode} & \textbf{Encode + Transfer} & \textbf{Target Motion-to-Photon} \\
 \midrule
-Local Wi-Fi 6 (5 GHz) & 3.2 ms & 6.8 ms & 14.1 ms & \textbf{24.1 ms} \\
-Commercial 5G (Sub-6) & 18.4 ms & 7.1 ms & 14.6 ms & \textbf{40.1 ms} \\
-LTE / 4G (Medium Signal) & 34.2 ms & 7.4 ms & 16.2 ms & \textbf{57.8 ms} \\
-Constrained 3G / Edge & 112.0 ms & 8.9 ms & 24.5 ms & 145.4 ms \\
+Local Wi-Fi 6 (5 GHz) & $\le 5.0$ ms & $\le 7.0$ ms & $\le 15.0$ ms & $\mathbf{\le 27.0\text{ ms}}$ \\
+Commercial 5G (Sub-6) & $\le 20.0$ ms & $\le 7.5$ ms & $\le 15.0$ ms & $\mathbf{\le 42.5\text{ ms}}$ \\
+LTE / 4G (Medium Signal) & $\le 35.0$ ms & $\le 8.0$ ms & $\le 18.0$ ms & $\mathbf{\le 61.0\text{ ms}}$ \\
+Constrained 3G / Edge & $\le 120.0$ ms & $\le 10.0$ ms & $\le 25.0$ ms & $\mathbf{\le 155.0\text{ ms}}$ \\
 \bottomrule
 \end{tabular}
-\caption{End-to-end latency benchmarks across different network transit media.}
+\caption{Target motion-to-photon latency budgets across network transport interfaces.}
 \label{tab:latency_benchmarks}
 \end{table}
 
-On 5G and Wi-Fi networks, the total motion-to-photon latency remained within the acceptable 30--45\,ms threshold required for human perception of fluid touch interaction. Frame rate maintained a steady 60\,fps with average bandwidth consumption of 4.2\,Mbps using AV1 encoding. Battery drain on the frontend handset was measured at 8.2\% per hour of continuous active screen time, comparing favorably to native local smartphone execution due to the offloading of heavy CPU application logic to the backend core.
+Under 5G and Wi-Fi 6, the target motion-to-photon latency budget remains below the 45\,ms threshold required for human perception of fluid touch interaction. The prototype design aims for a constant 60\,fps frame rate with an average target bandwidth consumption of 3.5--5.0\,Mbps utilizing hardware-accelerated AV1 encoding.
+
+\subsection{Prototype Implementation Roadmap}
+To facilitate community verification and independent reproducibility, the development of the prototype is structured into three iterative milestones:
+\begin{itemize}
+    \item \textbf{Milestone 1 (Virtualization Core):} Implement a containerized Android 14 runtime on a Linux host (via hardened Waydroid/KVM) with hardware-accelerated NVENC/VA-API AV1 streaming.
+    \item \textbf{Milestone 2 (Client Firmware):} Build an AOSP-derived client ROM with disabled swap, encrypted tmpfs mounts, dm-verity verification, and synthetic uinput injection.
+    \item \textbf{Milestone 3 (Revocation Harness):} Deploy a production IVR gateway with authenticated webhook endpoints connecting to kernel WireGuard controls and automated DRAM sanitization modules.
+\end{itemize}
