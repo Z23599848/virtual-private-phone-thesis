@@ -1,0 +1,51 @@
+\section{Background and Related Work}
+\label{sec:background}
+
+Understanding the security imperatives of the Virtual Private Phone requires an examination of modern digital forensics methodologies, cryptographic key state transitions in mobile operating systems, and the limitations of current remote computing paradigms.
+
+\subsection{Mobile Device Forensics and Acquisition Modalities}
+Mobile forensics follows established international standards such as ISO/IEC 27037~\cite{iso27037} and NIST SP 800-101 Revision 1~\cite{nist800101r1}. Forensic acquisition of mobile hardware broadly falls into three distinct tiers:
+\begin{enumerate}
+    \item \textbf{Logical Acquisition:} Involves communicating via standard operating system APIs (e.g., Android Debug Bridge or Apple iTunes backup protocols) to export user-accessible file systems, application containers, call logs, and SMS databases.
+    \item \textbf{File System Acquisition:} Involves exploiting system-level privileges or bootloader vulnerabilities to extract the raw partition structure, including sandbox-isolated directories, hidden app stores, and unallocated space.
+    \item \textbf{Physical Acquisition:} Involves a bit-by-bit physical clone of the underlying non-volatile flash storage (NAND / UFS / NVMe). This can be achieved through specialized hardware exploitation tools (e.g., Cellebrite UFED, Magnet GrayKey), JTAG testing interfaces, or physical chip-off extraction.
+\end{enumerate}
+
+\subsection{The Cryptographic State Problem: BFU vs. AFU}
+Modern mobile operating systems utilize sophisticated File-Based Encryption (FBE) architectures backed by dedicated hardware security modules (Apple Secure Enclave Processor (SEP), Google Titan M2)~\cite{grapheneos2024}. The vulnerability profile of a device depends fundamentally on its operational state:
+\begin{itemize}
+    \item \textbf{Before First Unlock (BFU):} Following a system reboot, the cryptographic Master Key ($K_{master}$) and user-credential derived keys ($K_{user}$) are absent from dynamic volatile RAM. The device is in a secure, encrypted state. Forensic extraction of plaintext databases without knowledge of the passcode is mathematically infeasible within standard time bounds.
+    \item \textbf{After First Unlock (AFU):} Once the user enters their PIN, password, or biometric credential for the first time following a boot cycle, $K_{user}$ is derived by the hardware security coprocessor and cached in volatile RAM to facilitate background task processing, notification receipt, and seamless unlocking. 
+\end{itemize}
+
+In the AFU state, even if the screen is subsequently locked, the class-level cryptographic keys protecting local SQLite databases (e.g., Signal messaging databases, WhatsApp chat histories, browser caches) remain resident in main memory. Specialized forensic toolkits (Cellebrite, GrayKey) leverage hardware vulnerability chains (e.g., checkm8, Qualcomm EDL bootloader flaws, memory bus side-channels) to extract these cached keys directly from memory, obtaining full plaintext access to the device~\cite{cellebrite2023whitepaper, graykey2023architecture}.
+
+\subsection{The Failure Modes of Remote Wipe and MDM}
+To counter physical device loss or seizure, modern enterprise architectures deploy Mobile Device Management (MDM) solutions with remote wipe capabilities (e.g., Apple Find My, Android Device Manager). However, as documented by Casey and Stellatos~\cite{casey2011digital}, remote wipe protocols suffer from fundamental physical failure modes:
+\begin{equation}
+    P(\text{Wipe Execution}) = P(\text{Network Availability}) \times P(\text{OS Integrity})
+\end{equation}
+
+When law enforcement or an adversarial actor seizes a device, standard evidentiary protocol mandates immediate placement of the device into an RF-shielding Faraday bag or Faraday box, accompanied by immediate physical ejection of the SIM card~\cite{nist800101r1}. Because all inbound RF signals (cellular, Wi-Fi, Bluetooth) are attenuated by $>90\text{ dB}$, the remote wipe push notification can never reach the baseband processor. The adversary subsequently connects the device to an isolated forensic analysis station via shielded cables, rendering the remote wipe capability entirely inert.
+
+\subsection{Comparative Analysis of Existing Systems}
+Several technologies attempt to isolate or remote mobile environments, but each fails to deliver a complete, anti-forensic mobile solution:
+\begin{table}[h!]
+\centering
+\small
+\begin{tabularx}{\textwidth}{lXXXXX}
+\toprule
+\textbf{Technology} & \textbf{Physical Isolation} & \textbf{Anti-Forensic Remanence} & \textbf{Peripheral Virtualization} & \textbf{Instant OOB Revocation} & \textbf{Everyday Ergonomics} \\
+\midrule
+Standard Smartphone & No & Poor & Local & No (Faraday Defeated) & High \\
+Tails / Qubes OS & High & High & Partial & Manual & Low (Desktop only) \\
+Anbox Cloud / AWS & Full & Medium & Incomplete (No cellular/sensors) & Via Cloud Console & Medium (High latency) \\
+Samsung DeX / scrcpy & Partial & Poor & Basic input only & Local only & Medium \\
+\textbf{Proposed VPP} & \textbf{Full} & \textbf{Near-Zero} & \textbf{Full Bi-directional} & \textbf{Cryptographic OOB} & \textbf{Native Mobile} \\
+\bottomrule
+\end{tabularx}
+\caption{Comparative analysis of existing security models vs. the Virtual Private Phone.}
+\label{tab:comparative_analysis}
+\end{table}
+
+While desktop operating systems such as Tails utilize RAM-only volatile persistence~\cite{chow2004shredder}, and Qubes OS provides compartmentalization, no existing architecture solves the end-to-end operational problem of a smartphone: bridging physical cellular SIM termination, low-latency multi-touch screen rendering, bi-directional camera and microphone streaming, and guaranteed cryptographic revocation upon physical seizure.

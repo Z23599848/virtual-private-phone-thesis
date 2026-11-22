@@ -1,0 +1,10 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+The contemporary monolithic smartphone model—wherein the computational engine, identity secrets, cryptographic vaults, and physical interaction surfaces are bound within an easily seized physical chassis—represents a catastrophic architectural vulnerability for high-risk operators, cybersecurity researchers, and privacy-conscious individuals. When a device is confiscated in an active, unlocked state, existing security defenses (including remote wipes) fail catastrophically against radio isolation and commercial forensic exploitation tools.
+
+In this work, we presented the \textbf{Virtual Private Phone (VPP)}, an asymmetric, decoupled mobile computing architecture that resolves this fundamental trade-off. By segregating the smartphone into an untrusted, ephemeral Frontend Handset carried in the pocket and a hardened, stationary Backend Core stationed at home, the VPP ensures that physical custody of the pocket device no longer equates to compromise of the digital identity.
+
+Through our Virtual Hardware Abstraction Layer (V-HAL), we demonstrated that low-latency AV1 streaming, multi-touch input injection, and bidirectional camera and telephony bridging achieve genuine feature parity with an ordinary smartphone under real-world 5G and Wi-Fi networks. Our cryptographic out-of-band revocation protocol and deterministic memory scrubbing mechanisms guarantee that post-revocation, an adversary possessing an unlocked frontend acquires zero historical databases, zero private cryptographic keys, and zero pathways back to the domestic core.
+
+The foundational design axiom of the Virtual Private Phone is achieved: \textbf{the operator can lose physical possession of the handset without losing control of the phone.}

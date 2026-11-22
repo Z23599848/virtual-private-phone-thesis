@@ -1,0 +1,114 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc,fit}
+\usepackage{tcolorbox}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+% --- Hyperref Setup ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=red!70!black,
+    urlcolor=blue!80!black,
+    pdftitle={The Virtual Private Phone (VPP): Decoupled Physical Architecture for Anti-Forensic Mobile Security and Resilient Digital Identity},
+    pdfauthor={Ali Ganji},
+    pdfkeywords={Mobile Forensics, Anti-Forensics, Decoupled Architecture, Thin-Client, Hardware Separation, Remote Attestation, Ephemeral OS}
+}
+
+% --- Header and Footer ---
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textit{The Virtual Private Phone (VPP)}}
+\lhead{Ali Ganji \textbullet\ LabXIII}
+\cfoot{\thepage}
+
+% --- Custom Environments ---
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{property}{Property}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% --- Title and Metadata ---
+\title{\textbf{The Virtual Private Phone (VPP):\\Decoupled Physical Architecture for Anti-Forensic Mobile Security and Resilient Digital Identity}}
+
+\author{
+    \textbf{Ali Ganji}\\
+    \textit{Principal Security Researcher}\\
+    LabXIII Research\\
+    \url{https://xiii.me} \quad \textbullet \quad \texttt{contact@xiii.me}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Smartphones are uniquely vulnerable to physical confiscation, border seizure, and involuntary forensic triage. A single handheld device simultaneously serves as an untrusted physical sensor interface, an identity credential anchor, a cellular communications node, and a persistent repository of personal records. When seized in an After First Unlock (AFU) state or unlocked under legal or physical coercion, physical disk extraction tools (e.g., Cellebrite UFED, Magnet GrayKey) extract full plaintext databases, private keys, and session cookies. Traditional countermeasures such as over-the-air (OTA) remote wipes fail categorically against immediate radio isolation (Faraday bags, SIM ejection). 
+
+In this work, we introduce the \textbf{Virtual Private Phone (VPP)}, an asymmetric, physically decoupled mobile architecture designed to defeat physical seizure and forensic acquisition while preserving the everyday ergonomics of a standard smartphone. The VPP model bifurcates the smartphone into two distinct nodes: an immutable, stateless \textit{Frontend Handset} carried by the user, and an isolated, physically protected \textit{Backend Core} stationed in a secure domestic redoubt. The frontend acts exclusively as an ephemeral Hardware Abstraction Layer (HAL) peripheral—capturing touch input, camera frames, and microphone audio, and rendering low-latency, encrypted AV1 video frames transmitted over an authenticated WireGuard/QUIC tunnel. All application execution, cellular baseband termination (pSIM/eSIM), persistent storage, and cryptographic roots of trust reside exclusively on the backend. 
+
+We formalize the VPP threat model against sophisticated physical adversaries, design an Out-of-Band (OOB) instantaneous revocation protocol capable of severing active sessions and scrubbing volatile client memory within milliseconds, and evaluate the architectural trade-offs across forensic survivability, cellular handover latency, and peripheral remanence. Our empirical benchmarks demonstrate that post-revocation, an adversary possessing an unlocked frontend acquires zero cryptographic material, zero historical messages, and zero access paths to the domestic core, satisfying the primary operational mandate: \textit{to lose physical possession of the handset without losing control of the phone.}
+\end{abstract}
+
+\vspace{1em}
+\noindent\textbf{Keywords:} Mobile Security, Digital Forensics, Anti-Forensics, Decoupled Architecture, Hardware Abstraction Virtualization, Cryptographic Revocation, Remote Attestation, Ephemeral Systems.
+
+\newpage
+\tableofcontents
+\newpage
+
+\input{sections/01_introduction.tex}
+\input{sections/02_background_and_related_work.tex}
+\input{sections/03_threat_model.tex}
+\input{sections/04_vpp_architecture.tex}
+\input{sections/05_cryptographic_protocols.tex}
+\input{sections/06_telephony_and_peripherals.tex}
+\input{sections/07_anti_forensic_evaluation.tex}
+\input{sections/08_limitations_and_future_work.tex}
+\input{sections/09_conclusion.tex}
+
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

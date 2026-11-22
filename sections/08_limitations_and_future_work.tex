@@ -1,0 +1,35 @@
+\section{Limitations, Countermeasures, and Future Work}
+\label{sec:limitations}
+
+While the Virtual Private Phone paradigm fundamentally redefines mobile anti-forensic security, comprehensive academic honesty demands rigorous analysis of its operational constraints, residual side-channels, and legal implications.
+
+\subsection{Operational Limitations and Edge Cases}
+
+\subsubsection{1. Absolute Network Dependency}
+The primary operational trade-off of a decoupled thin-client architecture is its reliance on continuous network connectivity. If the frontend traverses an environment devoid of cellular reception or Wi-Fi (e.g., deep underground transit, transcontinental flights without satellite connectivity, or rural wilderness), the user cannot interact with their backend applications.
+\begin{itemize}
+    \item \textbf{Mitigation:} In future iterations, the frontend OS can incorporate an isolated, encrypted \textit{Ephemeral Micro-Sandbox}. This partition can host offline cached audio files or a local notepad with volatile keys that are discarded unless successfully synchronized upstream upon network re-acquisition.
+\end{itemize}
+
+\subsubsection{2. Physical Compromise of the Domestic Core}
+The foundational trust assumption of the VPP is that the backend core remains physically secure within the operator's domestic sanctuary. If an adversary executes a simultaneous or subsequent search warrant against the physical residence:
+\begin{itemize}
+    \item \textbf{Mitigation (Tamper Enclosures and Tripwires):} The backend chassis can be integrated with physical tamper-detection enclosures (accelerometers, light sensors, chassis switches)~\cite{anderson2001tamper}. If physical motion or chassis intrusion is detected without a secondary disarm code, the backend invokes instant memory zeroization and destroys the LUKS/FBE header keys.
+    \item \textbf{Distributed Secret Sharing:} Future work will explore sharding the backend execution across multiple geographic locations using secure multi-party computation (MPC) and threshold cryptography, ensuring that no single physical seizure can expose the user's data vault.
+\end{itemize}
+
+\subsection{Traffic Analysis and Side-Channel Leakage}
+Even with ChaCha20-Poly1305 encryption, variable bitrate video encoding leaks information regarding user activity. When a user scrolls rapidly or watches high-motion video, frame size and packet frequency increase noticeably compared to reading static text. An eavesdropping network adversary ($\mathcal{A}_3$) observing the WireGuard pipe can infer coarse interaction patterns.
+\begin{itemize}
+    \item \textbf{Countermeasure (Chaff Injection and Constant-Rate Shaping):} The VPP transport protocol can enforce Constant Bitrate (CBR) packet shaping with dummy padding frames. By injecting pseudo-random packet bursts, the observable entropy of the encrypted stream is normalized, defeating statistical traffic classification.
+\end{itemize}
+
+\subsection{Legal, Ethical, and Evidentiary Considerations}
+The design of technologies that intentionally frustrate forensic extraction occupies a sensitive intersection between civil liberties, privacy, and evidentiary law.
+
+\subsubsection{Spoliation of Evidence vs. Information Privacy}
+In many jurisdictions, destroying evidence during or in anticipation of an ongoing criminal investigation constitutes criminal spoliation or obstruction of justice. However, the VPP's primary technical mechanism is \textit{access severance and segregation}, rather than data destruction:
+\begin{quote}
+\textit{“The distinction is timing... Possession of that frontend no longer grants access to the backend through its old session or pairing. What did I pay for? You paid to decide in advance where your working environment lives.”}
+\end{quote}
+The backend retains all historical data in its intact state at the operator's domicile. The VPP simply restores the constitutional equilibrium that existed prior to mobile computing: seizing an item from a citizen's pocket on the street does not grant an automatic physical bridge into their locked filing cabinet at home. If law enforcement possesses probable cause to search the backend, standard judicial processes (domestic search warrants, legal subpoena) apply to the physical residence.
