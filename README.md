@@ -5,9 +5,9 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 > **Researcher:** [Ali Ganji](https://xiii.me)  
-> **Affiliation:** LabXIII Research (`contact@xiii.me`)  
+> **Affiliation:** LabXIII Research (`aliganji@labxiii.org`)  
 > **Repository:** [https://github.com/Z23599848/virtual-private-phone-thesis](https://github.com/Z23599848/virtual-private-phone-thesis)  
-> **Thesis / Academic Paper:** Final-Year Capstone Thesis in Mobile Forensics & Cryptographic Security
+> **Thesis / Academic Paper:** A Thesis in Mobile Forensics & Cryptographic Security
 
 ---
 
